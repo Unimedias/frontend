@@ -1,114 +1,147 @@
-// called when a subject is clicked
-const expand = (sub, head, info) => {
-    if (document.body.offsetWidth >= 760) return;
-
-    info.classList.toggle("subject-collapse");
-    head.classList.toggle("subject-bg-orange");    
-    sub.classList.toggle("subject-open");
-};
-
-// called to calculate statistics based on currently inserted grades
-// also guarantees no incoherent values are inserted
-const update = (item, pr, tr) => {
-    const checkNumber = (num) => {
-        return !isNaN(parseFloat(num));
+fetch('http://localhost:3000/student')
+  .then(response => {
+    if (response.status >= 400) {
+      return response.json().then(errResData => {
+        // TODO: Elaborar uma forma de avisar ao usuário (na tela) sobre erros
+        const error = new Error('Something went wrong requesting your data');
+        error.data = errResData;
+        throw error;
+      });
     }
 
-    const clamp = (num) => {
-        return Math.min(Math.max(num, 0), 10);
+    return response.json();
+  }).then(data => {
+    // TODO: Gerar as matérias de forma automática a partir dos dados recebidos
+    console.log(data);
+
+    const subjects = document.querySelectorAll('.subject');
+
+    subjects.forEach(subject => {
+      const title = subject.querySelector('.subject-title');
+      const grades = subject.querySelector('.subject-inside');
+
+      title.addEventListener('click', evt => {
+        expandSubject(title, grades);
+      });
+
+      grades.addEventListener('input', evt => {
+        update(grades);
+      });
+    });
+
+    window.onresize = () => setTimeout(() => on_resize(subjects), 100);
+    on_resize(subjects);
+  });
+
+const on_resize = subjects => {
+  if (document.body.offsetWidth < 540) {
+    return;
+  }
+
+  subjects.forEach(subject => {
+    const title = subject.querySelector('.subject-title');
+    const grades = subject.querySelector('.subject-inside');
+
+    if (document.body.offsetWidth >= 540) {
+      subject.classList.add('subject-open');
+      grades.classList.remove('subject-collapse');
+      title.classList.add('subject-title-dark');
     }
+    else {
+      subject.classList.remove('subject-open');
+      grades.classList.add('subject-collapse');
+      title.classList.remove('subject-title-dark');
+    }
+  });
+}
 
-    // count variables are used to check how many boxes have valid inputs
-    let countP = 0;
-    let countT = 0;
+const expandSubject = (head, body)  => {
+  if (document.body.offsetWidth >= 540) {
+    return;
+  }
 
-    let sumP = 0;
-    let sumT = 0;
-
-    // get subs and their values
-    const ps1 = item.querySelectorAll(".subject-ps")[0];
-    const ps2 = item.querySelectorAll(".subject-ps")[1];
-
-    let ps1val = 0;
-    let ps2val = 0;
-
-    if(checkNumber(ps1.value)) ps1val = clamp(ps1.value);
-
-    if(checkNumber(ps2.value)) ps2val = clamp(ps2.value);
-
-    pr.forEach(e => {
-        if(checkNumber(e.value)) {
-            e.value = clamp(e.value);
-            countP++;
-            // check if sub value is greater than normal exam value
-            if((e.name === "P1" || e.name === "P2") & ps1val > parseFloat(e.value)){
-                sumP += ps1val;
-            } else if ((e.name === "P3" || e.name === "P4") & ps2val > parseFloat(e.value)){
-                sumP += ps2val;
-            } else {
-                sumP += parseFloat(e.value);
-            }
-        }
-    });
-
-    tr.forEach(e => {
-        if(checkNumber(e.value)) {
-            e.value = clamp(e.value);
-            countT++;
-            sumT += parseFloat(e.value);
-        }
-    });
-
-    // round, multiplication and division are used to display one decimal at most
-    const partialP = Math.round(sumP / countP * 10) / 10;
-    const partialT = Math.round(sumT / countT * 10) / 10;
-    const finalP = Math.round(sumP / pr.length * 10) / 10;
-    const finalT = Math.round(sumT / tr.length * 10) / 10;
-    const partialTotal = Math.round((partialP + partialT) / 2 * 10) / 10;
-    const finalTotal = Math.round((finalP + finalT) / 2 * 10) / 10;
-
-    // in the case of no inserted values, the partial will divide by zero and result in a NaN
-    // if that happens, check for a NaN and set the result to "?" instead
-    item.querySelector(".subject-p-partial").innerText = isNaN(partialP) ? "?" : partialP;
-    item.querySelector(".subject-t-partial").innerText = isNaN(partialT) ? "?" : partialT;
-    item.querySelector(".subject-p-final").innerText = finalP;
-    item.querySelector(".subject-t-final").innerText = finalT;
-    item.querySelector(".subject-total-partial").innerText = isNaN(partialTotal) ? "?" : partialTotal;
-    item.querySelector(".subject-total-final").innerText = finalTotal;
+  head.classList.toggle('subject-title-dark');
+  body.classList.toggle('subject-collapse');
 };
 
-// all subjects currently in the page
-const subjects = Array.from(document.querySelectorAll(".subject"));
+const isNumber = num => {
+  return !isNaN(parseFloat(num));
+}
 
-subjects.forEach(parent => {
-    const title = parent.querySelector(".subject-title"); // grab subject name
-    const grades = parent.querySelector(".subject-inside"); // grab grades & statistics
+const clamp = num => {
+  return Math.min(Math.max(num, 0), 10);
+}
 
-    const p = Array.from(parent.getElementsByClassName("subject-p")); // grab all "provas"
-    const t = Array.from(parent.getElementsByClassName("subject-t")); // grab all "trabalhos"
+const update = grades => {
+  const exams = grades.querySelectorAll('.subject-p');
+  const assigns = grades.querySelectorAll('.subject-t');
 
-    title.addEventListener("click", () => {
-        expand(parent, title, grades);
-    });
+  // Used to count how many boxes have valid inputs
+  let countExams = 0;
+  let countAssigns = 0;
 
-    // updates the calculated statistics whenever an input box changes
-    grades.addEventListener("input", (e) => {
-        update(grades, p, t);
-    });
-});
+  let sumExams = 0;
+  let sumAssigns = 0;
 
-function on_resize(c,t){onresize=function(){clearTimeout(t);t=setTimeout(c,100)};return c};
-on_resize(function() {
-    Array.from(document.getElementsByClassName("subject")).forEach( sub => {
-        if (document.body.offsetWidth >= 760) {
-            sub.classList.add("subject-open");
-            sub.getElementsByClassName("subject-inside")[0].classList.remove("subject-collapse");
-            sub.getElementsByClassName("subject-title")[0].classList.add("subject-bg-orange");
-        }
-        else {
-            sub.classList.remove("subject-open");
-            sub.getElementsByClassName("subject-inside")[0].classList.add("subject-collapse");
-            sub.getElementsByClassName("subject-title")[0].classList.remove("subject-bg-orange");
-        }
-    });
-})();
+  const subs = grades.querySelectorAll('.subject-ps');
+  const ps1 = subs[0];
+  const ps2 = subs[1];
+
+  let ps1val = 0;
+  let ps2val = 0;
+
+  if (isNumber(ps1.value)) {
+    ps1.value = ps1val = clamp(ps1.value);
+  }
+
+  if (isNumber(ps2.value)) {
+    ps2.value = ps2val = clamp(ps2.value);
+  }
+
+  exams.forEach(exam => {
+    if (isNumber(exam.value)) {
+      exam.value = clamp(exam.value);
+      countExams++;
+
+      // Check if sub value is greater than normal exam value
+      if ((exam.name === 'P1' || exam.name === 'P2') && ps1val > parseFloat(exam.value)) {
+        sumExams += ps1val;
+      } else if ((exam.name === 'P3' || exam.name === 'P4') && ps2val > parseFloat(exam.value)) {
+        sumExams += ps2val;
+      } else {
+        sumExams += parseFloat(exam.value);
+      }
+    }
+  });
+
+  assigns.forEach(assign => {
+    if (isNumber(assign.value)) {
+      assign.value = clamp(assign.value);
+      countAssigns++;
+      sumAssigns += parseFloat(assign.value);
+    }
+  });
+
+  const partialExams = Math.round(sumExams / countExams * 10) / 10;
+  const partialAssigns = Math.round(sumAssigns / countAssigns * 10) / 10;
+  const finalExams = Math.round(sumExams / exams.length * 10) / 10;
+  const finalAssigns = Math.round(sumAssigns / assigns.length * 10) / 10;
+  const partialTotal = Math.round((partialExams + partialAssigns) / 2 * 10) / 10;
+  const finalTotal = Math.round((finalExams + finalAssigns) / 2 * 10) / 10;
+
+  // In the case of no inserted values, the partial will divide by zero and result in a NaN
+  // If that happens, check for a NaN and set the result to '' instead
+  grades.querySelector('.subject-p-partial').innerText = isNaN(partialExams) ? '' : partialExams;
+  grades.querySelector('.subject-t-partial').innerText = isNaN(partialAssigns) ? '' : partialAssigns;
+  grades.querySelector('.subject-total-partial').innerText = isNaN(partialTotal) ? '' : partialTotal;
+  grades.querySelector('.subject-p-final').innerText = isNaN(finalExams) ? '' : finalExams;
+  grades.querySelector('.subject-t-final').innerText = isNaN(finalAssigns) ? '' : finalAssigns;
+  grades.querySelector('.subject-total-final').innerText = isNaN(finalTotal) ? '' : finalTotal;
+};
+
+const insertTemplate = (withId, atTarget, beforeElement) => {
+  const template = document.getElementById(withId);
+  const clone = template.content.cloneNode(true);
+
+  atTarget.insertBefore(clone, beforeElement);
+}
