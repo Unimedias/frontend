@@ -1,142 +1,181 @@
-<html lang="en">
+<html lang='en'>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <link rel="stylesheet" href="subject.css">
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>Unimédias</title>
+  <link rel='stylesheet' href='subject.css'>
 </head>
 
 <body>
-  <div class="subject-wrapper">
-    <article class="subject">
-      <h1 class="subject-title">Cálculo II</h1>
-      <div class="subject-inside subject-collapse">
-        <div class="subject-grades">
-          <div class="subject-section-p">
-            <div class="subject-p-item">
-              <label for="P1">P1</label>
-              <input type="number" name="P1" id="P1" class="subject-p" min="0" max="10" step="0.5">
+  <div class='subjects'>
+    <!-- <article class='subject'>
+      <h1 class='subject-header'>Cálculo II</h1>
+      <div class='subject-body subject-body-collapse'>
+        <div class='subject-grades'>
+          <div class='subject-grade-wrapper'>
+            <div class='subject-grade'>
+              <label for='P1'>P1</label>
+              <input type='number' name='P1' id='P1' class='subject-grade-exam' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-p-item">
-              <label for="P2">P2</label>
-              <input type="number" name="P1" id="P2" class="subject-p" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='P2'>P2</label>
+              <input type='number' name='P1' id='P2' class='subject-grade-exam' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-p-item">
-              <label for="PS1">PS1</label>
-              <input type="number" name="PS1" id="PS1" class="subject-ps" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='PS1'>PS1</label>
+              <input type='number' name='PS1' id='PS1' class='subject-grade-exam-sub' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-p-item">
-              <label for="P3">P3</label>
-              <input type="number" name="P3" id="P3" class="subject-p" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='P3'>P3</label>
+              <input type='number' name='P3' id='P3' class='subject-grade-exam' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-p-item">
-              <label for="P4">P4</label>
-              <input type="number" name="P4" id="P4" class="subject-p" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='P4'>P4</label>
+              <input type='number' name='P4' id='P4' class='subject-grade-exam' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-p-item">
-              <label for="PS2">PS2</label>
-              <input type="number" name="PS2" id="PS2" class="subject-ps" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='PS2'>PS2</label>
+              <input type='number' name='PS2' id='PS2' class='subject-grade-exam-sub' min='0' max='10' step='0.5'>
             </div>
           </div>
-          <div class="subject-section-t">
-            <div class="subject-t-item">
-              <label for="T1">T1</label>
-              <input type="number" name="T1" id="T1" class="subject-t" min="0" max="10" step="0.5">
+          <div class='subject-grade-wrapper'>
+            <div class='subject-grade'>
+              <label for='T1'>T1</label>
+              <input type='number' name='T1' id='T1' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T2">T2</label>
-              <input type="number" name="T2" id="T2" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T2'>T2</label>
+              <input type='number' name='T2' id='T2' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T3">T3</label>
-              <input type="number" name="T3" id="T3" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T3'>T3</label>
+              <input type='number' name='T3' id='T3' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T4">T4</label>
-              <input type="number" name="T4" id="T4" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T4'>T4</label>
+              <input type='number' name='T4' id='T4' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T5">T5</label>
-              <input type="number" name="T5" id="T5" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T5'>T5</label>
+              <input type='number' name='T5' id='T5' class='subject-grade-assign-sub' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T6">T6</label>
-              <input type="number" name="T6" id="T6" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T6'>T6</label>
+              <input type='number' name='T6' id='T6' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T7">T7</label>
-              <input type="number" name="T7" id="T7" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T7'>T7</label>
+              <input type='number' name='T7' id='T7' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T8">T8</label>
-              <input type="number" name="T8" id="T8" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T8'>T8</label>
+              <input type='number' name='T8' id='T8' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T9">T9</label>
-              <input type="number" name="T9" id="T9" class="subject-t" min="0" max="10" step="0.5">
+          </div>
+          <div class='subject-grade-wrapper'>
+            <div class='subject-grade'>
+              <label for='T9'>T9</label>
+              <input type='number' name='T9' id='T9' class='subject-grade-assign-sub' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T10">T10</label>
-              <input type="number" name="T10" id="T10" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T10'>T10</label>
+              <input type='number' name='T10' id='T10' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T11">T11</label>
-              <input type="number" name="T11" id="T11" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T11'>T11</label>
+              <input type='number' name='T11' id='T11' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T12">T12</label>
-              <input type="number" name="T12" id="T12" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T12'>T12</label>
+              <input type='number' name='T12' id='T12' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T13">T13</label>
-              <input type="number" name="T13" id="T13" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T13'>T13</label>
+              <input type='number' name='T13' id='T13' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T14">T14</label>
-              <input type="number" name="T14" id="T14" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T14'>T14</label>
+              <input type='number' name='T14' id='T14' class='subject-grade-assign-sub' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T15">T15</label>
-              <input type="number" name="T15" id="T15" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T15'>T15</label>
+              <input type='number' name='T15' id='T15' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
-            <div class="subject-t-item">
-              <label for="T16">T16</label>
-              <input type="number" name="T16" id="T16" class="subject-t" min="0" max="10" step="0.5">
+            <div class='subject-grade'>
+              <label for='T16'>T16</label>
+              <input type='number' name='T16' id='T16' class='subject-grade-assign' min='0' max='10' step='0.5'>
             </div>
           </div>
         </div>
-        <div class="subject-stats">
-          <div class="subject-stat-wrapper">
-            <h1 class="subject-stat-header">Média Parcial</h1>
-            <div class="subject-stat">
-              <label>Média de Prova:</label><span class="subject-p-partial"></span>
+        <div class='subject-stats'>
+          <div class='subject-stat-wrapper'>
+            <h1 class='subject-stat-header'>Média Parcial</h1>
+            <div class='subject-stat'>
+              <label class='subject-stat-label'>Média de Prova</label><span class='subject-stat-partial-exam'></span>
             </div>
-            <div class="subject-stat">
-              <label>Média de Trabalho:</label><span class="subject-t-partial"></span>
+            <div class='subject-stat'>
+              <label class='subject-stat-label'>Média de Trabalho</label><span class='subject-stat-partial-assign'></span>
             </div>
-            <div class="subject-stat">
-              <label>Média Parcial:</label><span class="subject-total-partial"></span>
+            <div class='subject-stat'>
+              <label class='subject-stat-label'>Média Parcial</label><span class='subject-stat-partial-total'></span>
             </div>
           </div>
-          <div class="subject-stat-wrapper">
-            <h1 class="subject-stat-header">Média Final</h1>
-            <div class="subject-stat">
-              <label>Média de Prova:</label><span class="subject-p-final"></span>
+          <div class='subject-stat-wrapper'>
+            <h1 class='subject-stat-header'>Média Final</h1>
+            <div class='subject-stat'>
+              <label class='subject-stat-label'>Média de Prova</label><span class='subject-stat-final-exam'></span>
             </div>
-            <div class="subject-stat">
-              <label>Média de Trabalho:</label><span class="subject-t-final"></span>
+            <div class='subject-stat'>
+              <label class='subject-stat-label'>Média de Trabalho</label><span class='subject-stat-final-assign'></span>
             </div>
-            <div class="subject-stat">
-              <label>Média Final:</label><span class="subject-total-final"></span>
+            <div class='subject-stat'>
+              <label class='subject-stat-label'>Média Final</label><span class='subject-stat-final-total'></span>
             </div>
           </div>
         </div>
       </div>
-    </article>
+    </article> -->
   </div>
-  <script src="subject.js"></script>
+
+  <template id='subject'>
+    <article class='subject'>
+      <h1 class='subject-header'></h1>
+      <div class='subject-body subject-body-collapse'>
+        <div class='subject-grades'>
+        </div>
+        <div class='subject-stats'>
+          <div class='subject-stat-wrapper'>
+            <h1 class='subject-stat-header'>Média Parcial</h1>
+          </div>
+          <div class='subject-stat-wrapper'>
+            <h1 class='subject-stat-header'>Média Final</h1>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <template id='subject-grade-wrapper'>
+    <div class='subject-grade-wrapper'>
+    </div>
+  </template>
+
+  <template id='subject-grade'>
+    <div class='subject-grade'>
+      <label for=''></label>
+      <input type='number' name='' id='' class='' min='0' max='10' step='0.5'>
+    </div>
+  </template>
+
+  <template id='subject-stat'>
+    <div class='subject-stat'>
+      <label class='subject-stat-label'></label><span class=''></span>
+    </div>
+  </template>
+
+  <script src='subject.js'></script>
 </body>
 
 </html>

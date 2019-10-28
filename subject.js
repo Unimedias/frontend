@@ -11,137 +11,211 @@ fetch('http://localhost:3000/student')
 
     return response.json();
   }).then(data => {
-    // TODO: Gerar as matérias de forma automática a partir dos dados recebidos
     console.log(data);
 
-    const subjects = document.querySelectorAll('.subject');
+    const $subjects = document.querySelector('.subjects');
 
-    subjects.forEach(subject => {
-      const title = subject.querySelector('.subject-title');
-      const grades = subject.querySelector('.subject-inside');
+    const { years } = data;
 
-      title.addEventListener('click', evt => {
-        expandSubject(title, grades);
-      });
+    const { subjects } = years[years.length - 1];
 
-      grades.addEventListener('input', evt => {
-        update(grades);
-      });
+    const maxNumberOfGrades = maxGradesNumberOfAll(subjects);
+
+    subjects.forEach(({ name, exams, assigns }) => {
+      insertTemplate('subject', $subjects);
+
+      const $subject = $subjects.lastElementChild;
+      const $header = $subject.querySelector('.subject-header');
+      const $grades = $subject.querySelector('.subject-body .subject-grades');
+      const $stats = $subject.querySelectorAll('.subject-body .subject-stats .subject-stat-wrapper');
+
+      $header.innerText = name;
+      $grades.style.height = `${Math.min(maxNumberOfGrades, 8) * 43}px`; // 43 is the height, in px, of each grade
+
+      if (exams.length) {
+        setGradesAt($grades, exams, name, 'subject-grade-exam');
+        setStatsAt($stats, ['Média de Prova', 'Média de Prova'], ['subject-stat-partial-exam', 'subject-stat-final-exam'])
+      }
+
+      if (assigns.length) {
+        setGradesAt($grades, assigns, name, 'subject-grade-assign');
+        setStatsAt($stats, ['Média de Trabalho', 'Média de Trabalho'], ['subject-stat-partial-assign', 'subject-stat-final-assign'])
+      }
+
+      setStatsAt($stats, ['Média Parcial', 'Média Final'], ['subject-stat-partial-total', 'subject-stat-final-total'])
     });
 
-    window.onresize = () => setTimeout(() => on_resize(subjects), 100);
-    on_resize(subjects);
+    setupSubjects('subject-stat');
   });
 
-const on_resize = subjects => {
-  if (document.body.offsetWidth < 540) {
-    return;
-  }
+const maxGradesNumberOfAll = subjects => {
+  let max = 0;
 
-  subjects.forEach(subject => {
-    const title = subject.querySelector('.subject-title');
-    const grades = subject.querySelector('.subject-inside');
+  subjects.forEach(({ exams, assigns }) => {
+    max = Math.max(max, exams.length, assigns.length);
+  });
+
+  return max;
+}
+
+const insertTemplate = (withId, $atTarget) => {
+  const $template = document.getElementById(withId);
+  const $clone = $template.content.cloneNode(true);
+
+  $atTarget.appendChild($clone);
+}
+
+const setGradesAt = ($target, withData, ofSubjectNamed, withClass) => {
+  let $grades = null;
+
+  withData.forEach(({ label, grade }, index) => {
+    if (index % 8 === 0) {
+      insertTemplate('subject-grade-wrapper', $target);
+      $grades = $target.lastElementChild;
+    }
+
+    insertTemplate('subject-grade', $grades);
+
+    const $grade = $grades.lastElementChild;
+    const $label = $grade.querySelector('label');
+    const $score = $grade.querySelector('input');
+
+    $label.setAttribute('for', `${ofSubjectNamed} - ${label}`);
+    $label.innerText = label;
+
+    $score.setAttribute('name', `${ofSubjectNamed} - ${label}`);
+    $score.setAttribute('id', `${ofSubjectNamed} - ${label}`);
+    $score.setAttribute('class', withClass);
+    $score.value = grade;
+  });
+}
+
+const setStatsAt = ($targets, withLabels, andClasses) => {
+  $targets.forEach(($stat, index) => {
+    insertTemplate('subject-stat', $stat);
+
+    const $last = $stat.lastElementChild;
+    const $label = $last.querySelector('label');
+    const $score = $last.querySelector('span');
+
+    $label.innerText = withLabels[index];
+    $score.setAttribute('class', andClasses[index]);
+  });
+}
+
+const setupSubjects = () => {
+  const $subjects = document.querySelectorAll('.subject');
+
+  $subjects.forEach(subject => {
+    const $header = subject.querySelector('.subject-header');
+    const $body = subject.querySelector('.subject-body');
+
+    updateSubjectStats($body);
+
+    $body.addEventListener('change', evt => {
+      updateSubjectStats($body);
+    });
 
     if (document.body.offsetWidth >= 540) {
-      subject.classList.add('subject-open');
-      grades.classList.remove('subject-collapse');
-      title.classList.add('subject-title-dark');
-    }
-    else {
-      subject.classList.remove('subject-open');
-      grades.classList.add('subject-collapse');
-      title.classList.remove('subject-title-dark');
+      $header.classList.add('subject-header-dark');
+      $body.classList.remove('subject-body-collapse');
+    } else {
+      $header.addEventListener('click', evt => {
+        // TODO: Subir a página até onde a matéria se inicia quando o usuário abrir ela
+        $header.classList.toggle('subject-header-dark');
+        $body.classList.toggle('subject-body-collapse');
+      });
     }
   });
 }
 
-const expandSubject = (head, body)  => {
-  if (document.body.offsetWidth >= 540) {
-    return;
-  }
+const updateSubjectStats = $body => {
+  // TODO: Ajustar o cálculo de notas para considerar os pesos e as notas substitutivas
+  const $exams = $body.querySelectorAll('.subject-grade-wrapper .subject-grade-exam');
+  const $assigns = $body.querySelectorAll('.subject-grade-wrapper .subject-grade-assign');
 
-  head.classList.toggle('subject-title-dark');
-  body.classList.toggle('subject-collapse');
-};
+  let partialExams = 0;
+  let partialAssigns = 0;
+  let finalExams = 0;
+  let finalAssigns = 0;
 
-const isNumber = num => {
-  return !isNaN(parseFloat(num));
-}
+  if ($exams.length) {
+    const $partialExams = $body.querySelector('.subject-stat-wrapper .subject-stat-partial-exam');
+    const $finalExams = $body.querySelector('.subject-stat-wrapper .subject-stat-final-exam');
 
-const clamp = num => {
-  return Math.min(Math.max(num, 0), 10);
-}
+    let countExams = 0;
+    let sumExams = 0;
 
-const update = grades => {
-  const exams = grades.querySelectorAll('.subject-p');
-  const assigns = grades.querySelectorAll('.subject-t');
-
-  // Used to count how many boxes have valid inputs
-  let countExams = 0;
-  let countAssigns = 0;
-
-  let sumExams = 0;
-  let sumAssigns = 0;
-
-  const subs = grades.querySelectorAll('.subject-ps');
-  const ps1 = subs[0];
-  const ps2 = subs[1];
-
-  let ps1val = 0;
-  let ps2val = 0;
-
-  if (isNumber(ps1.value)) {
-    ps1.value = ps1val = clamp(ps1.value);
-  }
-
-  if (isNumber(ps2.value)) {
-    ps2.value = ps2val = clamp(ps2.value);
-  }
-
-  exams.forEach(exam => {
-    if (isNumber(exam.value)) {
-      exam.value = clamp(exam.value);
-      countExams++;
-
-      // Check if sub value is greater than normal exam value
-      if ((exam.name === 'P1' || exam.name === 'P2') && ps1val > parseFloat(exam.value)) {
-        sumExams += ps1val;
-      } else if ((exam.name === 'P3' || exam.name === 'P4') && ps2val > parseFloat(exam.value)) {
-        sumExams += ps2val;
-      } else {
-        sumExams += parseFloat(exam.value);
+    $exams.forEach($exam => {
+      if (isNumber($exam.value)) {
+        $exam.value = format($exam.value);
+        sumExams += parseFloat($exam.value);
+        countExams++;
       }
-    }
-  });
+    });
 
-  assigns.forEach(assign => {
-    if (isNumber(assign.value)) {
-      assign.value = clamp(assign.value);
-      countAssigns++;
-      sumAssigns += parseFloat(assign.value);
-    }
-  });
+    partialExams = sumExams / (countExams || $exams.length);
+    finalExams = sumExams / $exams.length;
 
-  const partialExams = Math.round(sumExams / countExams * 10) / 10;
-  const partialAssigns = Math.round(sumAssigns / countAssigns * 10) / 10;
-  const finalExams = Math.round(sumExams / exams.length * 10) / 10;
-  const finalAssigns = Math.round(sumAssigns / assigns.length * 10) / 10;
-  const partialTotal = Math.round((partialExams + partialAssigns) / 2 * 10) / 10;
-  const finalTotal = Math.round((finalExams + finalAssigns) / 2 * 10) / 10;
+    applyGoodOrBadEffectTo(partialExams, $partialExams);
+    applyGoodOrBadEffectTo(finalExams, $finalExams);
 
-  // In the case of no inserted values, the partial will divide by zero and result in a NaN
-  // If that happens, check for a NaN and set the result to '' instead
-  grades.querySelector('.subject-p-partial').innerText = isNaN(partialExams) ? '' : partialExams;
-  grades.querySelector('.subject-t-partial').innerText = isNaN(partialAssigns) ? '' : partialAssigns;
-  grades.querySelector('.subject-total-partial').innerText = isNaN(partialTotal) ? '' : partialTotal;
-  grades.querySelector('.subject-p-final').innerText = isNaN(finalExams) ? '' : finalExams;
-  grades.querySelector('.subject-t-final').innerText = isNaN(finalAssigns) ? '' : finalAssigns;
-  grades.querySelector('.subject-total-final').innerText = isNaN(finalTotal) ? '' : finalTotal;
+    $partialExams.innerText = isNaN(partialExams) ? '' : partialExams.toFixed(2);
+    $finalExams.innerText = isNaN(finalExams) ? '' : finalExams.toFixed(2);
+  }
+
+  if ($assigns.length) {
+    const $partialAssigns = $body.querySelector('.subject-stat-wrapper .subject-stat-partial-assign');
+    const $finalAssigns = $body.querySelector('.subject-stat-wrapper .subject-stat-final-assign');
+
+    let countAssigns = 0;
+    let sumAssigns = 0;
+
+    $assigns.forEach($assign => {
+      if (isNumber($assign.value)) {
+        $assign.value = format($assign.value);
+        sumAssigns += parseFloat($assign.value);
+        countAssigns++;
+      }
+    });
+
+    partialAssigns = sumAssigns / (countAssigns || $assigns.length);
+    finalAssigns = sumAssigns / $assigns.length;
+
+    applyGoodOrBadEffectTo(partialAssigns, $partialAssigns);
+    applyGoodOrBadEffectTo(finalAssigns, $finalAssigns);
+
+    $partialAssigns.innerText = isNaN(partialAssigns) ? '' : partialAssigns.toFixed(2);
+    $finalAssigns.innerText = isNaN(finalAssigns) ? '' : finalAssigns.toFixed(2);
+  }
+
+  const partialTotal = (partialExams + partialAssigns) / 2;
+  const finalTotal = (finalExams + finalAssigns) / 2;
+
+  const $partialTotal = $body.querySelector('.subject-stat-wrapper .subject-stat-partial-total');
+  const $finalTotal = $body.querySelector('.subject-stat-wrapper .subject-stat-final-total');
+
+  applyGoodOrBadEffectTo(partialTotal, $partialTotal);
+  applyGoodOrBadEffectTo(finalTotal, $finalTotal);
+
+  $partialTotal.innerText = isNaN(partialTotal) ? '' : partialTotal.toFixed(2);
+  $finalTotal.innerText = isNaN(finalTotal) ? '' : finalTotal.toFixed(2);
 };
 
-const insertTemplate = (withId, atTarget, beforeElement) => {
-  const template = document.getElementById(withId);
-  const clone = template.content.cloneNode(true);
+const isNumber = value => {
+  return !isNaN(parseFloat(value));
+}
 
-  atTarget.insertBefore(clone, beforeElement);
+const format = grade => {
+  return Math.round(Math.min(Math.max(grade, 0), 10) * 2) / 2;
+}
+
+const applyGoodOrBadEffectTo = (score, $atTarget) => {
+  if (score >= 5.95) {
+    $atTarget.classList.remove('class', 'subject-stat-bad');
+    $atTarget.classList.add('class', 'subject-stat-good');
+  } else {
+    $atTarget.classList.remove('class', 'subject-stat-good');
+    $atTarget.classList.add('class', 'subject-stat-bad');
+  }
 }
